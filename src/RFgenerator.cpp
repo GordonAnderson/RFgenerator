@@ -150,6 +150,10 @@
 //      - Set DAC to high current mode
 //    Version 1.7, July 19, 2025
 //      - Added support for continous DMA of bias value. Require USEDMA command to enable
+//    Version 1.8, Aug 18, 2026
+//      - Fixed bugs related to BIAS voltage updating, this bug was due to the 
+//        updates performed for the other firmware varients.
+//      - Fixed bug in the USUDMA command, it was not updating the bias value when the command was issued.
 //
 // Coil details for first unit:
 //   - Form 0.5"
@@ -186,7 +190,7 @@ void (*myAnalogWriteFunction)(int) = myAnalogWrite;
 
 #define writeBIAS  myAnalogWriteFunction(Value2Counts(currentBias,&rfgendata.DCbias));
 
-const char   Version[] PROGMEM = "MIPS RF Genrator Version 1.7, July 19, 2025";
+const char   Version[] PROGMEM = "MIPS RF Genrator Version 1.8, Aug 18, 2026";
 RFgenData   rfgendata;
 
 RFgenData Rev_1_rfgendata = {
@@ -569,6 +573,7 @@ void setup()
  	while (DAC->SYNCBUSY.bit.ENABLE || DAC->SYNCBUSY.bit.SWRST);
 	DAC->CTRLA.bit.ENABLE = 1;     // enable DAC
 	while (DAC->SYNCBUSY.bit.ENABLE || DAC->SYNCBUSY.bit.SWRST);
+  writeBIAS;
   // Configure Threads
   SystemThread.setName((char *)"Update");
   SystemThread.onRun(Update);
@@ -591,6 +596,7 @@ void setup()
   timer.every(500, StatusLED);
   rfgendata.Enable=false;
   functionPin.released();
+  writeBIAS;
   delay(4000);
   Ethernet_init();
 }
@@ -1348,6 +1354,8 @@ void useDMA(void)
     myAnalogWriteFunction = myAnalogWriteDMA;
     dma_init(0);
     dac_init(0,6);
+    writeBIAS;    // Seed constantDacValue with the current bias, otherwise DMA
+                  // outputs its stale default until the bias is next changed
   }
   SendACK;
 }

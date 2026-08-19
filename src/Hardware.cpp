@@ -339,6 +339,10 @@ static DmacDescriptor descriptor1[DMAC_NUM_CHANNELS] __attribute__((aligned(16))
 static DmacDescriptor wrb[DMAC_NUM_CHANNELS] __attribute__((aligned(16))); // Write-back descriptor
 
 // --- DMA Initialization Function ---
+// The dma_init function initializes the Direct Memory Access (DMA) controller for a specified 
+// channel, configuring the DMA settings, including the base address, trigger source, and 
+// descriptor for data transfer. It ensures that the DMA is enabled and ready for burst 
+// transfers from a constant value to the DAC data register.
 void dma_init(int dmach) 
 {
   MCLK->AHBMASK.bit.DMAC_ = 1;
@@ -391,6 +395,10 @@ void dma_init(int dmach)
 }
 
 // --- DAC Initialization Function ---
+// The dac_init function initializes a Digital-to-Analog Converter (DAC) by configuring the generic 
+// clock generator, connecting it to the DAC peripheral, enabling the DAC clock, performing a 
+// software reset, and setting up the DAC channel with specific parameters. It also includes 
+// steps to ensure the DAC is ready for operation and configures the output pin for the DAC.
 void dac_init(int dacCH, int clkCH) 
 {
   // 1. Configure Generic Clock Generator 7 (GCLK7) for DAC
