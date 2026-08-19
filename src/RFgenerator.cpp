@@ -153,7 +153,7 @@
 //    Version 1.8, Aug 18, 2026
 //      - Fixed bugs related to BIAS voltage updating, this bug was due to the 
 //        updates performed for the other firmware varients.
-//      - Fixed bug in the USUDMA command, it was not updating the bias value when the command was issued.
+//      - Fixed bug in the USEDMA command, it was not updating the bias value when the command was issued.
 //
 // Coil details for first unit:
 //   - Form 0.5"
